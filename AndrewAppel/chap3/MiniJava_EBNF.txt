@@ -1,0 +1,156 @@
+Goal
+  ::= MainClass TypeDeclaration* EOF
+
+MainClass
+  ::= "class" Identifier "{"
+        "public" "static" "void" "main"
+        "(" "String" "[" "]" Identifier ")"
+        "{"
+          ( LOOKAHEAD(2) VarDeclaration )*
+          Statement*
+        "}"
+      "}"
+
+TypeDeclaration
+  ::= LOOKAHEAD(3) ClassDeclaration
+   |  ClassExtendsDeclaration
+
+ClassDeclaration
+  ::= "class" Identifier "{"
+        VarDeclaration*
+        MethodDeclaration*
+      "}"
+
+ClassExtendsDeclaration
+  ::= "class" Identifier "extends" Identifier "{"
+        VarDeclaration*
+        MethodDeclaration*
+      "}"
+
+VarDeclaration
+  ::= Type Identifier ";"
+
+MethodDeclaration
+  ::= "public" Type Identifier
+      "(" [ FormalParameterList ] ")"
+      "{"
+        ( LOOKAHEAD(2) VarDeclaration )*
+        Statement*
+        "return" Expression ";"
+      "}"
+
+FormalParameterList
+  ::= FormalParameter { FormalParameterRest }
+
+FormalParameter
+  ::= Type Identifier
+
+FormalParameterRest
+  ::= "," FormalParameter
+
+Type
+  ::= LOOKAHEAD(3) ArrayType
+   |  BooleanType
+   |  IntegerType
+   |  Identifier
+
+ArrayType
+  ::= "int" "[" "]"
+
+BooleanType
+  ::= "boolean"
+
+IntegerType
+  ::= "int"
+
+Statement
+  ::= Block
+   |  LOOKAHEAD(2) AssignmentStatement
+   |  LOOKAHEAD(2) ArrayAssignmentStatement
+   |  IfStatement
+   |  WhileStatement
+   |  PrintStatement
+
+Block
+  ::= "{"
+        Statement*
+      "}"
+
+AssignmentStatement
+  ::= Identifier "=" Expression ";"
+
+ArrayAssignmentStatement
+  ::= Identifier "[" Expression "]" "=" Expression ";"
+
+IfStatement
+  ::= "if" "(" Expression ")" Statement "else" Statement
+
+WhileStatement
+  ::= "while" "(" Expression ")" Statement
+
+PrintStatement
+  ::= "System.out.println" "(" Expression ")" ";"
+
+Expression
+  ::= AndExpression
+
+AndExpression
+  ::= CompareExpression { "&&" CompareExpression }
+
+CompareExpression
+  ::= AddExpression { "<" AddExpression }
+
+AddExpression
+  ::= MulExpression { ("+" | "-") MulExpression }
+
+MulExpression
+  ::= UnaryExpression { "*" UnaryExpression }
+
+UnaryExpression
+  ::= "!" UnaryExpression
+   |  PostfixExpression
+
+PostfixExpression
+  ::= PrimaryExpression
+      {
+          "[" Expression "]"
+        | LOOKAHEAD(2) "." "length"
+        | LOOKAHEAD( "." Identifier() "(" ) "." Identifier "(" [ ExpressionList ] ")"
+      }
+
+ExpressionList
+  ::= Expression { ExpressionRest }
+
+ExpressionRest
+  ::= "," Expression
+
+PrimaryExpression
+  ::= IntegerLiteral
+   |  TrueLiteral
+   |  FalseLiteral
+   |  Identifier
+   |  ThisExpression
+   |  LOOKAHEAD(3) ArrayAllocationExpression
+   |  AllocationExpression
+   |  "(" Expression ")"
+
+IntegerLiteral
+  ::= INTEGER_LITERAL
+
+TrueLiteral
+  ::= "true"
+
+FalseLiteral
+  ::= "false"
+
+Identifier
+  ::= IDENTIFIER
+
+ThisExpression
+  ::= "this"
+
+ArrayAllocationExpression
+  ::= "new" "int" "[" Expression "]"
+
+AllocationExpression
+  ::= "new" Identifier "(" ")"
