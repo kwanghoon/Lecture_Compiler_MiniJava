@@ -1,6 +1,6 @@
 # IRTranslation: 수학적 명세
 
-이 문서는 구현 코드와 무관하게, MiniJava AST를 Tree IR로 변환하는 의미론을 수학적으로 기술한 명세이다.
+이 문서는, MiniJava AST를 Tree IR로 변환하는 의미론을 수학적으로 기술한 명세이다.
 
 ---
 
